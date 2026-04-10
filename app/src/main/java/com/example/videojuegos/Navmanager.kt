@@ -15,7 +15,7 @@ fun NavManager(){
         composable("Home"){
             HomeView( navController, user)
         }
-        composable("Products"){
+        composable("MainView"){
             MainView( navController,user=user)
         }
 

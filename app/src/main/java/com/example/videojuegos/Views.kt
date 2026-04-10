@@ -73,9 +73,8 @@ fun MainView(navegar: NavHostController,user: Usuario){
                             Column(modifier = Modifier.padding(5.dp)) {
                                 Spacer(modifier = Modifier.size(10.dp))
                                 Text(prod.nombre, fontSize = 20.sp)
-
                                 Text(text="$ ${prod.precio}", fontSize = 14.sp, fontWeight = FontWeight.Bold)
-
+                                Text(prod.consola, fontSize = 20.sp)
                                 Spacer(modifier = Modifier.size(8.dp))
                                 Button(onClick = {
                                     if (edadbuy){

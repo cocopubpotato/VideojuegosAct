@@ -14,7 +14,7 @@ class VGmodelsView {
         prodlist.add(VGmodels(nombre = "Legend of Zelda: Majora's Mask", imagen = R.drawable.mm, precio = 49.9f, consola = "Nintendo 64", clasif = "E"))
         prodlist.add(VGmodels(nombre = "Transformers War For Cybertron", imagen = R.drawable.tfwfc, precio = 29.9f, consola = "XBOX 360", clasif = "T"))
         prodlist.add(VGmodels(nombre = "Resident Evil 2: Remake", imagen = R.drawable.re2re, precio = 39.9f, consola = "PS4", clasif = "M"))
-        prodlist.add(VGmodels(nombre = "Transformers War For Cybertron", imagen = R.drawable.tfwfc, precio = 29.9f, consola = "XBOX 360", clasif = "T"))
+        prodlist.add(VGmodels(nombre = "deltarune", imagen = R.drawable.deltarune, precio = 19.9f, consola = "Switch2", clasif = "T"))
         return prodlist
     }
 }
