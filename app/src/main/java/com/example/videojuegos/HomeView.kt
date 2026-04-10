@@ -34,7 +34,7 @@ fun HomeView(navegar: NavHostController,usuario: Usuario){
     Column(Modifier.fillMaxSize().padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
-        Text("Bienvenido a\nla tiendita\nPandesin\n", textAlign = TextAlign.Center, fontSize = 35.sp)
+        Text("Bienvenido a la tiendita\nPandesin\n", textAlign = TextAlign.Center, fontSize = 35.sp)
         Text("Ingresa los siguientes datos",fontSize = 28.sp, textAlign = TextAlign.Center)
         Text("Tu nombre")
         TextField(value = nombre, onValueChange = {nombre=it})

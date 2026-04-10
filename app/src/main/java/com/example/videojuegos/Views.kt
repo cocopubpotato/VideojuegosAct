@@ -37,20 +37,18 @@ import androidx.navigation.NavHostController
 @Composable
 fun MainView(navegar: NavHostController,user: Usuario){
     val productos = VGmodelsView()
-
     var compras by remember { mutableStateOf(0f) }
-
-
-
-
 
     Column(Modifier
         .fillMaxSize()
         .padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
-        Text("Bienvenido a \nla tiendita\nPandesin\n", textAlign = TextAlign.Center, fontSize = 35.sp)
-
+        Text("Bienvenido a la tiendita Pandesin",Modifier.padding(top = 10.dp), textAlign = TextAlign.Center, fontSize = 35.sp)
+        Button(onClick = {navegar.navigate("Home")},
+            colors = ButtonDefaults.buttonColors(Color(0xFF7D6991)),
+            modifier=Modifier.width(150.dp)) {
+            Text("Regresar", fontSize = 18.sp) }
         LazyColumn() {
             items(productos.getProducts()){ prod->
                 val edadbuy= when(prod.clasif){
@@ -67,7 +65,7 @@ fun MainView(navegar: NavHostController,user: Usuario){
                             Image(painter = painterResource(prod.imagen),
                                 contentDescription = "imagen de producto",
                                 modifier = Modifier
-                                    .size(50.dp)
+                                    .size(60.dp)
                                     .align(Alignment.CenterVertically)
                             )
                             Column(modifier = Modifier.padding(5.dp)) {
@@ -94,14 +92,6 @@ fun MainView(navegar: NavHostController,user: Usuario){
             }
 
         }
-
-
-
-        Spacer(Modifier.height(34.dp))
-        Button(onClick = {navegar.navigate("Home")},
-            colors = ButtonDefaults.buttonColors(Color(0xFF7D6991)),
-            modifier=Modifier.width(150.dp)) {
-            Text("Regresar", fontSize = 18.sp) }
     }
 }
 
