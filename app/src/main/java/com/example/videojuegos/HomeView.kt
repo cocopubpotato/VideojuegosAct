@@ -26,7 +26,7 @@ import androidx.navigation.NavHostController
 
 
 @Composable
-fun HomeView(navegar: NavHostController,Usuario: Usuario){
+fun HomeView(navegar: NavHostController,usuario: Usuario){
     var nombre by remember { mutableStateOf("") }
     var edad by remember { mutableStateOf("") }
     var cambio by remember { mutableStateOf("") }
@@ -34,21 +34,21 @@ fun HomeView(navegar: NavHostController,Usuario: Usuario){
     Column(Modifier.fillMaxSize().padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
-        Text("Bienvenido a \nla tiendita\nPandesin\n", textAlign = TextAlign.Center, fontSize = 35.sp)
-        Text("Ingresa Los siguientes datos",fontSize = 30.sp, textAlign = TextAlign.Center)
+        Text("Bienvenido a\nla tiendita\nPandesin\n", textAlign = TextAlign.Center, fontSize = 35.sp)
+        Text("Ingresa los siguientes datos",fontSize = 28.sp, textAlign = TextAlign.Center)
         Text("Tu nombre")
         TextField(value = nombre, onValueChange = {nombre=it})
         Text("Tu edad")
         TextField(value = edad, onValueChange = {edad=it})
-        Text("Tu nombre")
+        Text("Tus ahorros")
         TextField(value = cambio, onValueChange = {cambio=it})
         Spacer(Modifier.height(34.dp))
 
         Button(onClick = {
-            navegar.navigate("MainView")
-            Usuario.name= nombre
-            Usuario.age= edad.toInt()
-            Usuario.cash=cambio.toFloat()
+         //   navegar.navigate("MainView")
+            usuario.name= nombre
+            usuario.age= edad.toInt()
+            usuario.cash=cambio.toFloat()
             navegar.navigate("MainView") },
             colors = ButtonDefaults.buttonColors(Color(0xFF7D6991)),
             modifier=Modifier.width(150.dp)) {

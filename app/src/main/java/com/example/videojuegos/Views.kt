@@ -35,9 +35,9 @@ import androidx.navigation.NavHostController
 
 
 @Composable
-fun MainView(navegar: NavHostController){
+fun MainView(navegar: NavHostController,user: Usuario){
     val productos = VGmodelsView()
-    var age = Usuario().age
+
     var compras by remember { mutableStateOf(0f) }
 
 
@@ -55,8 +55,8 @@ fun MainView(navegar: NavHostController){
             items(productos.getProducts()){ prod->
                 val edadbuy= when(prod.clasif){
                     "E"->true
-                    "T"->age.toInt()> 13
-                    "M"-> age.toInt()>18
+                    "T"-> user.age> 13
+                    "M"-> user.age>18
                     else -> false
                 }
                 Card(modifier = Modifier
@@ -75,13 +75,6 @@ fun MainView(navegar: NavHostController){
                                 Text(prod.nombre, fontSize = 20.sp)
 
                                 Text(text="$ ${prod.precio}", fontSize = 14.sp, fontWeight = FontWeight.Bold)
-
-
-
-
-
-
-
 
                                 Spacer(modifier = Modifier.size(8.dp))
                                 Button(onClick = {

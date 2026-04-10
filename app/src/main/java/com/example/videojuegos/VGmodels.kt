@@ -1,6 +1,5 @@
 package com.example.videojuegos
 
-import android.R
 
 data class VGmodels(
     var imagen: Int,
