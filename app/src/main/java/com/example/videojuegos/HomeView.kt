@@ -20,18 +20,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
 
-@Preview(showBackground = true)
 @Composable
-fun HomeView(){
-    var name by remember { mutableStateOf("") }
-    var age by remember { mutableStateOf("") }
-    var cash by remember { mutableStateOf("") }
+fun HomeView(navegar: NavHostController,Usuario: Usuario){
+    var nombre by remember { mutableStateOf("") }
+    var edad by remember { mutableStateOf("") }
+    var cambio by remember { mutableStateOf("") }
 
     Column(Modifier.fillMaxSize().padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -39,14 +37,19 @@ fun HomeView(){
         Text("Bienvenido a \nla tiendita\nPandesin\n", textAlign = TextAlign.Center, fontSize = 35.sp)
         Text("Ingresa Los siguientes datos",fontSize = 30.sp, textAlign = TextAlign.Center)
         Text("Tu nombre")
-        TextField(value = name, onValueChange = {name=it})
+        TextField(value = nombre, onValueChange = {nombre=it})
         Text("Tu edad")
-        TextField(value = age, onValueChange = {age=it})
+        TextField(value = edad, onValueChange = {edad=it})
         Text("Tu nombre")
-        TextField(value = cash, onValueChange = {cash=it})
+        TextField(value = cambio, onValueChange = {cambio=it})
         Spacer(Modifier.height(34.dp))
 
-        Button(onClick = {},
+        Button(onClick = {
+            navegar.navigate("MainView")
+            Usuario.name= nombre
+            Usuario.age= edad.toInt()
+            Usuario.cash=cambio.toFloat()
+            navegar.navigate("MainView") },
             colors = ButtonDefaults.buttonColors(Color(0xFF7D6991)),
             modifier=Modifier.width(150.dp)) {
             Text("Siguiente", fontSize = 18.sp) }
