@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -21,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,105 +41,82 @@ import androidx.navigation.NavHostController
 @Composable
 fun MainView(navegar: NavHostController) {
     val productos = VGmodelsView()
-    var compras by remember { mutableStateOf(0f) }
+    //info generada en esta vista
+    var compras by remember { mutableFloatStateOf(0f) }
     var carrito by remember { mutableStateOf(listOf<VGmodels>()) }
     var mostrarCarrito by remember { mutableStateOf(false) }
+    var forma by remember { mutableStateOf(true) }
 
+
+    //info previa del usuario
     val context = LocalContext.current
     val preferences = Usuarios(contexto = context)
-    var name = preferences.name.collectAsState("")
-    var age = preferences.age.collectAsState(0)
-    var cash = preferences.cash.collectAsState(0f)
+    val name = preferences.name.collectAsState("")
+    val age = preferences.age.collectAsState(0)
+    val cash = preferences.cash.collectAsState(0f)
 
 
     Column(Modifier.fillMaxSize().padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     ) {
+
         Text("Bienvenido a la tiendita Pandesin",
             Modifier.padding(top = 10.dp),
             textAlign = TextAlign.Center,
             fontSize = 35.sp
         )
-        Row(Modifier.fillMaxWidth()) {
-            Button(onClick = { navegar.navigate("Home") },
-                colors = ButtonDefaults.buttonColors(Color(0xFF7D6991)),
-                modifier = Modifier.width(150.dp)
-            ) {
-                Text("Regresar", fontSize = 18.sp)
+        Column(Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,) {
+            Row {
+                Button(onClick = { navegar.navigate("Home") },
+                    colors = ButtonDefaults.buttonColors(Color(0xFF7D6991)),
+                    modifier = Modifier.width(150.dp)
+                ) {
+                    Text("Regresar", fontSize = 16.sp)
+                }
+                Button(onClick = { mostrarCarrito = true },
+                    colors = ButtonDefaults.buttonColors(Color(0xFF7D6991)),
+                    modifier = Modifier.width(150.dp)
+                ) {
+                    Text("Finalizar compra", fontSize = 16.sp)
+                }
             }
-
-            Button(onClick = { mostrarCarrito = true },
+            Button(onClick = {forma = !forma},
                 colors = ButtonDefaults.buttonColors(Color(0xFF7D6991)),
-                modifier = Modifier.width(150.dp)
+                modifier = Modifier.width(108.dp).align(Alignment.CenterHorizontally)
             ) {
-                Text("Finalizar compra", fontSize = 18.sp)
+                Text("Cambiar Forma", fontSize = 14.sp)
             }
         }
 
 
-        LazyColumn() {
-            items(productos.getProducts()) { prod ->
-                val yaAgregado = carrito.any { it.nombre == prod.nombre }
-                val edadbuy = when (prod.clasif) {
-                    "E" -> true
-                    "T" -> age.value >= 13
-                    "M" -> age.value >= 18
-                    else -> false
-                }
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
-                ) {
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        Row {
-                            Image(
-                                painter = painterResource(prod.imagen),
-                                contentDescription = "imagen de producto",
-                                modifier = Modifier
-                                    .size(60.dp)
-                                    .align(Alignment.CenterVertically)
-                            )
-                            Column(modifier = Modifier.padding(5.dp)) {
-                                Spacer(modifier = Modifier.size(10.dp))
-                                Text(prod.nombre, fontSize = 20.sp)
-                                Text(
-                                    text = "$ ${prod.precio}",
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(prod.consola, fontSize = 20.sp)
-                                Spacer(modifier = Modifier.size(8.dp))
-                                Button(
-                                    onClick = {
-                                        if (edadbuy) {
-                                            val puedeComprar = (cash.value - compras) >= prod.precio
-                                            if (puedeComprar && !yaAgregado) {
-                                                carrito = carrito + prod
-                                                compras += prod.precio
-                                                Log.d("EVENTO", "provando el evento del producto..")
-                                            }
-                                        }
-                                    }, colors = ButtonDefaults.buttonColors(
-                                        containerColor = Color.Yellow,
-                                        contentColor = Color.Black
-                                    )
-                                ) { Text(if (yaAgregado) "Agregado" else "Agregar al carrito") }
 
-                                //Spacer(modifier = Modifier.size(10.dp))
+
+    //lammada a los prroductos
+                if (forma){LazyColumn {
+                    items(productos.getProducts()) { prod ->
+                        Ladata(prod, carrito, compras, age.value, cash.value) {
+                            carrito = carrito + it
+                            compras += it.precio
+                        }
+                    }
+                }
+                }else{
+                    LazyRow {
+                        items(productos.getProducts()) { prod ->
+                            Ladata(prod, carrito, compras, age.value, cash.value) {
+                                carrito = carrito + it
+                                compras += it.precio
                             }
                         }
                     }
                 }
             }
-        }
-
-                                    //boton finaliar compra resultados
+        //boton finaliar compra resultados
         if (mostrarCarrito) {
             androidx.compose.ui.window.Dialog(
-                onDismissRequest = { mostrarCarrito = false }
+                onDismissRequest = {mostrarCarrito = false }
             ) {
                 Card(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -150,7 +129,7 @@ fun MainView(navegar: NavHostController) {
                             items(carrito) { prod ->
                                 Row(modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween) {
-                                    Text(prod.nombre)
+                                    Text(prod.nombre,Modifier.width(120.dp))
                                     Text("$ ${prod.precio}")
                                 }
                                 Spacer(modifier = Modifier.size(10.dp))
@@ -166,6 +145,66 @@ fun MainView(navegar: NavHostController) {
             }
         }
     }
+@Composable
+fun Ladata(
+    prod: VGmodels,
+    carrito:List<VGmodels>,
+    compras:Float,
+    age:Int,
+    cash:Float,
+    onAgregar: (VGmodels)->Unit
+){
+    val yaAgregado = carrito.any { it.nombre == prod.nombre }
+    val edadbuy = when (prod.clasif) {
+        "E" -> true
+        "T" -> age>= 13
+        "M" -> age >= 18
+        else -> false
+    }
+
+    Card(
+        modifier = Modifier
+            .width(250.dp)
+            .padding(10.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row {
+                Image(
+                    painter = painterResource(prod.imagen),
+                    contentDescription = "imagen de producto",
+                    modifier = Modifier
+                        .size(60.dp)
+                        .align(Alignment.CenterVertically)
+                )
+                Column(modifier = Modifier.padding(5.dp)) {
+                    Spacer(modifier = Modifier.size(10.dp))
+                    Text(prod.nombre, fontSize = 20.sp)
+                    Text(
+                        text = "$ ${prod.precio}",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(prod.consola, fontSize = 20.sp)
+                    Spacer(modifier = Modifier.size(8.dp))
+                    Button(
+                        onClick = {
+                            if (edadbuy) {
+                                val puedeComprar = (cash - compras) >= prod.precio
+                                if (puedeComprar && !yaAgregado) {
+                                    onAgregar(prod)
+                                    Log.d("EVENTO", "provando el evento del producto..")
+                                }
+                            }
+                        }, colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Yellow,
+                            contentColor = Color.Black
+                        )
+                    ) { Text(if (yaAgregado) "Agregado" else "Agregar al carrito") }
+
+                    //Spacer(modifier = Modifier.size(10.dp))
+                }
+            }
+        }
+    }
 }
-
-
