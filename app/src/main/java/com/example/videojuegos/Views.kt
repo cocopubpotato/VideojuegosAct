@@ -1,5 +1,6 @@
 package com.example.videojuegos
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,13 +19,16 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,9 +38,17 @@ import androidx.navigation.NavHostController
 
 
 @Composable
-fun MainView(navegar: NavHostController,user: Usuario){
+fun MainView(navegar: NavHostController){
     val productos = VGmodelsView()
     var compras by remember { mutableStateOf(0f) }
+
+    val context= LocalContext.current
+    val preferences= Usuarios(contexto= context)
+    //val corrutina= rememberCoroutineScope()
+    var name= preferences.name.collectAsState("")
+    var age= preferences.age.collectAsState(0)
+    var cash= preferences.cash.collectAsState(0f)
+
 
     Column(Modifier
         .fillMaxSize()
@@ -52,8 +64,8 @@ fun MainView(navegar: NavHostController,user: Usuario){
             items(productos.getProducts()){ prod->
                 val edadbuy= when(prod.clasif){
                     "E"->true
-                    "T"-> user.age> 13
-                    "M"-> user.age>18
+                    "T"-> age.value> 13
+                    "M"-> age.value>18
                     else -> false
                 }
                 Card(modifier = Modifier
