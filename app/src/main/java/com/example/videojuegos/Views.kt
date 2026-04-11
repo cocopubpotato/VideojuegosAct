@@ -1,6 +1,6 @@
 package com.example.videojuegos
 
-import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,7 +23,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,10 +40,11 @@ import androidx.navigation.NavHostController
 fun MainView(navegar: NavHostController){
     val productos = VGmodelsView()
     var compras by remember { mutableStateOf(0f) }
+    var carrito by remember { mutableStateOf(listOf<VGmodels>()) }
+    var mostrarCarrito by remember { mutableStateOf(false) }
 
     val context= LocalContext.current
     val preferences= Usuarios(contexto= context)
-    //val corrutina= rememberCoroutineScope()
     var name= preferences.name.collectAsState("")
     var age= preferences.age.collectAsState(0)
     var cash= preferences.cash.collectAsState(0f)
@@ -56,16 +56,24 @@ fun MainView(navegar: NavHostController){
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
         Text("Bienvenido a la tiendita Pandesin",Modifier.padding(top = 10.dp), textAlign = TextAlign.Center, fontSize = 35.sp)
-        Button(onClick = {navegar.navigate("Home")},
-            colors = ButtonDefaults.buttonColors(Color(0xFF7D6991)),
-            modifier=Modifier.width(150.dp)) {
-            Text("Regresar", fontSize = 18.sp) }
+        Row(Modifier.fillMaxWidth()){
+            Button(onClick = {navegar.navigate("Home")},
+                colors = ButtonDefaults.buttonColors(Color(0xFF7D6991)),
+                modifier=Modifier.width(150.dp)) {
+                Text("Regresar", fontSize = 18.sp) }
+
+
+        }
+
+
+
         LazyColumn() {
             items(productos.getProducts()){ prod->
+                val yaAgregado = carrito.any { it.nombre == prod.nombre }
                 val edadbuy= when(prod.clasif){
                     "E"->true
-                    "T"-> age.value> 13
-                    "M"-> age.value>18
+                    "T"-> age.value>=13
+                    "M"-> age.value>=18
                     else -> false
                 }
                 Card(modifier = Modifier
@@ -87,22 +95,25 @@ fun MainView(navegar: NavHostController){
                                 Spacer(modifier = Modifier.size(8.dp))
                                 Button(onClick = {
                                     if (edadbuy){
-                                        compras=prod.precio + compras
-                                    }
-
+                                        val puedeComprar = (cash.value - compras) >= prod.precio
+                                    if (puedeComprar && !yaAgregado) {
+                                        carrito= carrito+prod
+                                        compras += prod.precio
+                                        Log.d("a", "funciona")
+                                    } }
                                 }, colors = ButtonDefaults.buttonColors(
                                     containerColor = Color.Yellow,
-                                    contentColor = Color.Black)) {Text("Agregar al carrito") }
-                                Spacer(modifier = Modifier.size(10.dp))
+                                    contentColor = Color.Black)) {Text(if (yaAgregado)"Agregado" else "Agregar al carrito") }
 
+
+                                //Spacer(modifier = Modifier.size(10.dp))
                             }
                         }
                     }
                 }
-
             }
-
         }
+
     }
 }
 
