@@ -12,7 +12,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -63,7 +62,7 @@ fun HomeView(navegar: NavHostController){
 
         Button(onClick = {
            corrutina.launch {
-               preferences.guardarDatosPersonales(edad.toInt(), nombre, cambio.toFloat()) }
+               preferences.guardarDatosPersonales(edad, nombre, cambio) }
             navegar.navigate("MainView") },
             colors = ButtonDefaults.buttonColors(Color(0xFF7D6991)),
             modifier=Modifier.width(150.dp)) {
